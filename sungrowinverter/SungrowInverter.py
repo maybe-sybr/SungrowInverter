@@ -11,7 +11,7 @@ Refer configs/hybrid.py and configs/string.py for inverters that are supported.
 
 __version__ = "0.2.1"
 
-from sungrowinverter.SungrowModbusTCPClient import SungrowModbusTcpClient
+from SungrowModbusWebClient.SungrowModbusWebClient import SungrowModbusWebClient
 from sungrowinverter.configs.inverter import (
     INVERTER_SCAN,
     INVERTER_READ_REGISTERS,
@@ -72,16 +72,16 @@ class SungrowInverter:
             "retry_on_empty": True,
         }
 
-        self._modbusclient = SungrowModbusTcpClient(**client_payload)
+        self._modbusclient = SungrowModbusWebClient(**client_payload)
 
         logging.debug("Sungrow modbus TCP client - [IP:%s Port:%s]", ip_address, port)
 
     async def _load_registers(self, register_type, start, modbus_registers, count=100):
         try:
             if register_type == "read":
-                response = self._modbusclient.read_input_registers(int(start), count=count, slave=self._slave)
+                response = await self._modbusclient.read_input_registers(int(start), count=count, slave=self._slave)
             elif register_type == "holding":
-                response = self._modbusclient.read_holding_registers(int(start), count=count, slave=self._slave)
+                response = await self._modbusclient.read_holding_registers(int(start), count=count, slave=self._slave)
             else:
                 logging.error("Unsupported register type: %s", register_type)
 
