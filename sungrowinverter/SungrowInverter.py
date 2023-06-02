@@ -228,7 +228,6 @@ class SungrowInverter:
 
                         # see if the inverter supports a battery if so grab that data also
                         if inverter_model.inverter_type == "hybrid":
-                            
                             connection = self._modbusclient.connect()
                             if connection:
 
@@ -247,13 +246,12 @@ class SungrowInverter:
                                 logging.info("Storage device attached to inverter: [Model: %s, Capacity: %s kWh]", self.battery_type, self.battery_energy_capacity)
 
                         return inverter_model
-                                       
                     else:
                         logging.error("UPSUPPORT INVERTER: Supported inverter device_type_code [%s] is not supported", self.data["device_type_code"])
                 else:
                     logging.error("DEVICE CODE NOT FOUND: A device code could not be obtained from the inverter")
             else:
-                logging.error("CONNECTION ERROR: Could not connect to inverter @ Host: %s, Port: %s", self._modbusclient.host, self._modbusclient.port)                                        
+                logging.error("CONNECTION ERROR: Could not connect to inverter: %r", self._modbusclient)
         else:
             return SungrowInverterModel(self.device_code, self.model, self.inverter_type, self.mppt_inputs, self.nominal_output_power, self.serial_number)
 
@@ -267,7 +265,6 @@ class SungrowInverter:
             await self.inverter_model()
 
         if self.model is not None:
-            
             calculation_registers = None
 
             if self.inverter_type == "hybrid":
@@ -280,7 +277,6 @@ class SungrowInverter:
                 inverter_scan = STRING_SCAN
                 read_registers = STRING_READ_REGISTERS
                 holding_registers = STRING_HOLDING_REGISTERS
-                
             else:
                 logging.error("UNSUPPORTED INVERTER: Inverter type is not supported")
                 return False
